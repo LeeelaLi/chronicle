@@ -4,7 +4,8 @@ import {
   loadProjects, 
   saveProjects, 
   createProject,
-  updateProjectAccess 
+  updateProjectAccess,
+  clearAllProjects
 } from './utils/dataManager';
 import ProjectList from './components/ProjectList';
 import TreeView from './components/TreeView';
@@ -35,6 +36,32 @@ function App() {
       saveProjects(projects);
     }
   }, [projects]);
+
+  // Hidden Debug Feature - Shift+Delete to clear all data
+  useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+          // Check for 'Delete' (PC forward delete/Mac fn+Delete) OR 'Backspace' (PC/Mac main delete)
+          const isDeleteKey = event.key === 'Delete' || event.key === 'Backspace';
+
+          if (event.shiftKey && isDeleteKey) {
+            event.preventDefault();
+            // Prompt for confirmation before irreversible action
+            if (window.confirm('WARNING: Hidden Debug Feature Activated. Press OK to permanently delete ALL project data.')) {
+              clearAllProjects();
+              // Reset application state and notify user
+              setProjects([]);
+              setCurrentProject(null);
+              setSelectedNode(null);
+              alert('All data cleared. Reload the page for a clean slate.');
+            }
+          }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => {
+          window.removeEventListener('keydown', handleKeyDown);
+        };
+      }, []);
 
   const handleSelectProject = (project: Project) => {
     const updated = updateProjectAccess(project);
@@ -77,11 +104,11 @@ function App() {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50">
+    <div className="h-screen flex flex-col bg-indigo-50">
       {/* Header */}
       <header className="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold text-gray-900">Chronicle</h1>
+        <div className="flex items-center gap-4">
+          <h1 className="text-3xl font-extrabold text-blue-700">Chronicle</h1>
           <span className="text-sm text-gray-500">Track your problem-solving journey</span>
         </div>
         <div className="text-sm text-gray-600">

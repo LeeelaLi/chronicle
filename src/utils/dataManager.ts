@@ -229,3 +229,13 @@ export const getProjectStats = (project: Project) => {
   
   return { total, byStatus };
 };
+
+// Export function to clear all project data
+export const clearAllProjects = (): void => {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+    console.log('All project data cleared from localStorage.');
+  } catch (error) {
+    console.error('Failed to clear projects:', error);
+  }
+};
